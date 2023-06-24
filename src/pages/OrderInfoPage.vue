@@ -93,7 +93,7 @@
         </div> -->
 
         <OrderCartInfo page-type = "OrderInfoPage" :products = 'products' :total-price = 'totalPrice'
-        :order-amount-products = 'orderAmountProducts'
+        :order-amount-products = 'this.$store.state.orderInfo.basket.items.length'
         :orderDeliveryPrice = 'this.$store.state.orderDeliveryPrice' :totalPrice = 'totalPrice'/>
       </form>
     </section>
@@ -115,7 +115,7 @@ export default {
     this.$store.dispatch('loadOrderInfo', this.$route.params.id);
   },
   computed: {
-    ...mapGetters({ products: 'savedOrderDetailProducts', totalPrice: 'savedOrderTotalprice', orderAmountProducts: 'orderAmountProducts' }),
+    ...mapGetters({ products: 'savedOrderDetailProducts', totalPrice: 'savedOrderTotalprice' }),
   },
 };
 </script>

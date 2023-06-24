@@ -73,10 +73,7 @@ export default new Vuex.Store({
       return state.orderDeliveryPrice;
     },
     orderAmountProducts(state, getters) {
-      if (getters.cartDetailProducts.length) {
-        return getters.cartDetailProducts.reduce((acc, item) => item.amount + acc, 0);
-      }
-      return getters.savedOrderDetailProducts.reduce((acc, item) => item.amount + acc, 0);
+      return getters.cartDetailProducts.reduce((acc, item) => item.amount + acc, 0);
     },
     savedOrderDetailProducts(state) {
       if (!state.orderInfo) {

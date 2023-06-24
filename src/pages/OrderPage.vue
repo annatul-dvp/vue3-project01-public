@@ -120,7 +120,6 @@
           Оформляем заказ...
         </div>
         <div v-if="orderIsDone">Заказ оформлен</div>
-        <div v-if="orderHasError">Заказ не оформлен</div>
 
         <div class="cart__error form__error-block" v-if="formErrorMessage">
           <h4>Заявка не отправлена!</h4>
@@ -158,7 +157,6 @@ export default {
 
       orderIsLoading: false,
       orderIsDone: false,
-      orderHasError: false,
     };
   },
   computed: {
@@ -196,11 +194,7 @@ export default {
           })
           .then(() => {
             this.orderIsLoading = false;
-            this.orderHasError = true;
-            if (!Object.entries(this.formError).length) {
-              this.orderIsDone = true;
-              this.orderHasError = false;
-            }
+            this.orderIsDone = true;
           });
       }, 3000);
     },
