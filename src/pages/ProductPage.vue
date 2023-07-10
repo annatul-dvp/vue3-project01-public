@@ -38,7 +38,7 @@
         <div class="item__form">
           <form class="form" action="#" method="POST" @submit.prevent="addToCart">
             <b class="item__price">
-              {{ product.price | numberFormat }}
+              {{ productPricePretty }}
             </b>
 
             <fieldset class="form__block">
@@ -86,7 +86,7 @@
             </fieldset>
 
             <div class="item__row">
-              <CounterProduct :product-amount.sync="productAmount"  :page-type.sync="pageType"> </CounterProduct>
+              <CounterProduct v-model:product-amount="productAmount"  v-model:page-type="pageType"> </CounterProduct>
 
               <button class="button button--primery" type="submit" :disabled="productAddSending">
                 В корзину
@@ -171,9 +171,10 @@ import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
 import CounterProduct from '@/components/CounterProduct.vue';
 import { mapActions } from 'vuex';
+import { defineComponent } from 'vue';
 import { API_BASE_URL } from '../config';
 
-export default {
+export default defineComponent({
   data() {
     return {
       pageType: 'productPage',
@@ -190,10 +191,10 @@ export default {
     };
   },
   components: { CounterProduct },
-  filters: {
-    numberFormat,
-  },
   computed: {
+    productPricePretty() {
+      return numberFormat(this.product.price);
+    },
     product() {
       return this.productData ? { ...this.productData, image: this.productData.image.file.url } : [];
     },
@@ -227,13 +228,11 @@ export default {
         });
     },
   },
-  watch: {
-    '$route.params.id': {
-      handler() {
-        this.loadProduct();
-      },
-      immediate: true,
-    },
+  created() {
+    this.loadProduct();
   },
-};
+  beforeRouteUpdate() {
+    this.loadProduct();
+  },
+});
 </script>

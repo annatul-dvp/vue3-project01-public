@@ -10,8 +10,8 @@
   </div>
 
   <div class="content__catalog">
-    <ProductFilter :price-from.sync="filterPriceFrom" :price-to.sync="filterPriceTo"
-    :category-id.sync="filterCategoryId" :colorId.sync="filterColorId"/>
+    <ProductFilter v-model:price-from="filterPriceFrom" v-model:price-to="filterPriceTo"
+    v-model:category-id="filterCategoryId" v-model:colorId="filterColorId"/>
     <section class="catalog">
       <div v-if="productsLoading">
         <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
@@ -46,13 +46,13 @@
 
 <script>
 import axios from 'axios';
-// import products from '@/data/products';
 import ProductList from '@/components/ProductsList.vue';
 import BasePagination from '@/components/BasePagination.vue';
 import ProductFilter from '@/components/ProductFilter.vue';
+import { defineComponent } from 'vue';
 import { API_BASE_URL } from '../config';
 
-export default {
+export default defineComponent({
   components: { ProductList, BasePagination, ProductFilter },
   data() {
     return {
@@ -60,7 +60,6 @@ export default {
       filterPriceTo: 0,
       filterCategoryId: 0,
       filterColorId: 0,
-      /* '#73B6EA', */
 
       page: 1,
       productPerPage: 3,
@@ -126,5 +125,5 @@ export default {
   created() {
     this.loadProducts();
   },
-};
+});
 </script>

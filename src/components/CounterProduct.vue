@@ -37,8 +37,9 @@
 </template>
 
 <script>
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   props: ['productAmount', 'pageType', 'amount'],
   data() {
     return {
@@ -62,5 +63,5 @@ export default {
     },
   },
 
-};
+});
 </script>

@@ -76,22 +76,6 @@
           </ul>
         </div>
 
-        <!-- <div class="cart__block">
-          <ul class="cart__orders">
-            <li class="cart__order" v-for="p in this.$store.state.orderInfo.basket.items" :key="p.product.id">
-              <h3>{{ p.product.title }}</h3>
-              <b>{{ p.product.price*p.quantity | numberFormat }}</b>
-              <span>Артикул: {{  p.product.id  }}</span>
-            </li>
-          </ul>
-
-          <div class="cart__total">
-            <p>Доставка: <b>{{ this.$store.state.orderDeliveryPrice | numberFormat  }}</b></p>
-            <p>Итого: <b>{{ this.$store.state.orderInfo.basket.items.length }} </b>
-              товара на сумму <b>{{ this.$store.state.orderInfo.totalPrice | numberFormat }}</b></p>
-          </div>
-        </div> -->
-
         <OrderCartInfo page-type = "OrderInfoPage" :products = 'products' :total-price = 'totalPrice'
         :order-amount-products = 'orderAmountProducts'
         :orderDeliveryPrice = 'this.$store.state.orderDeliveryPrice' :totalPrice = 'totalPrice'/>
@@ -102,11 +86,10 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import numberFormat from '@/helpers/numberFormat';
 import OrderCartInfo from '@/components/OrderCartInfo.vue';
+import { defineComponent } from 'vue';
 
-export default {
-  filters: { numberFormat },
+export default defineComponent({
   components: { OrderCartInfo },
   created() {
     if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
@@ -117,5 +100,5 @@ export default {
   computed: {
     ...mapGetters({ products: 'savedOrderDetailProducts', totalPrice: 'savedOrderTotalprice', orderAmountProducts: 'orderAmountProducts' }),
   },
-};
+});
 </script>

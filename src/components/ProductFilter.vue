@@ -113,16 +113,17 @@
 
 <script>
 import axios from 'axios';
+import { defineComponent } from 'vue';
 import { API_BASE_URL } from '../config';
 
-export default {
+export default defineComponent({
   props: ['priceFrom', 'priceTo', 'categoryId', 'colorId'],
   data() {
     return {
       currentPriceFrom: 0,
       currentPriceTo: 0,
       currentCategoryId: 0,
-      currentColor: '#73B6EA',
+      currentColor: '#73b6ea',
 
       categoriesData: null,
       colorsData: null,
@@ -155,7 +156,7 @@ export default {
       this.$emit('update:priceFrom', this.currentPriceFrom);
       this.$emit('update:priceTo', this.currentPriceTo);
       this.$emit('update:categoryId', this.currentCategoryId);
-      this.$emit('update:colorId', this.colorsData.items.find((c) => c.code === this.currentColor).id);
+      this.$emit('update:colorId', this.colorsData.items.find((c) => c.code.toLowerCase() === this.currentColor.toLowerCase()).id);
     },
     reset() {
       this.$emit('update:priceFrom', 0);
@@ -176,5 +177,5 @@ export default {
     this.loadCategories();
     this.loadColors();
   },
-};
+});
 </script>

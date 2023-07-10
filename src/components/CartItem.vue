@@ -11,10 +11,10 @@
       Артикул: {{ item.product.id }}
     </span>
 
-    <CounterProduct :product-amount.sync="amount"  :page-type.sync="pageType"> </CounterProduct>
+    <CounterProduct v-model:product-amount="amount"  v-model:page-type="pageType"> </CounterProduct>
 
     <b class="product__price">
-      {{ (item.amount * item.product.price) | numberFormat }}
+      {{ totalPricePretty }}
     </b>
 
     <button class="product__del button-del" type="button"
@@ -30,9 +30,9 @@
 import numberFormat from '@/helpers/numberFormat';
 import { mapMutations } from 'vuex';
 import CounterProduct from '@/components/CounterProduct.vue';
+import { defineComponent } from 'vue';
 
-export default {
-  filters: { numberFormat },
+export default defineComponent({
   data() {
     return {
       pageType: 'cartItem',
@@ -41,6 +41,9 @@ export default {
   props: ['item'],
   components: { CounterProduct },
   computed: {
+    totalPricePretty() {
+      return numberFormat(this.item.amount * this.item.product.price);
+    },
     amount: {
       get() {
         return this.item.amount;
@@ -56,5 +59,5 @@ export default {
       this.$store.dispatch('deleteCartProduct', { productID: this.item.productID });
     },
   },
-};
+});
 </script>

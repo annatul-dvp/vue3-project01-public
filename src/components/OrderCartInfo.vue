@@ -6,10 +6,10 @@
 
     <div class="cart__total">
       <p>Доставка:
-        <b v-if="orderAmountProducts !== 0">{{ orderDeliveryPrice | numberFormat }}</b>
-        <b v-else>{{ 0 | numberFormat }}</b>
+        <b v-if="orderAmountProducts !== 0">{{ orderDeliveryPricePretty }}</b>
+        <b v-else>{{ 0 }}</b>
       </p>
-      <p>Итого: <b>{{ orderAmountProducts }}</b> товара на сумму <b>{{ totalPrice | numberFormat }}</b></p>
+      <p>Итого: <b>{{ orderAmountProducts }}</b> товара на сумму <b>{{ totalPricePretty }}</b></p>
     </div>
     <button v-if="pageType === 'OrderPage'" class="cart__button button button--primery" type="submit">
       Оформить заказ
@@ -22,8 +22,15 @@ import numberFormat from '@/helpers/numberFormat';
 import OrderItem from '@/components/OrderItem.vue';
 
 export default {
-  filters: { numberFormat },
   props: ['pageType', 'products', 'orderAmountProducts', 'orderDeliveryPrice', 'totalPrice'],
   components: { OrderItem },
+  computed: {
+    totalPricePretty() {
+      return numberFormat(this.totalPrice);
+    },
+    orderDeliveryPricePretty() {
+      return numberFormat(this.orderDeliveryPrice);
+    },
+  },
 };
 </script>

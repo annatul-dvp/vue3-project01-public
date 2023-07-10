@@ -86,24 +86,6 @@
           </div>
         </div>
 
-        <!-- <div class="cart__block">
-          <ul class="cart__orders">
-            <OrderItem v-for="item in products" :key="item.productID" :item="item"/>
-          </ul>
-
-          <div class="cart__total">
-            <p>Доставка:
-              <b v-if="orderAmountProducts !== 0">{{ orderDeliveryPrice | numberFormat }}</b>
-              <b v-else>{{ 0 | numberFormat }}</b>
-            </p>
-            <p>Итого: <b>{{ orderAmountProducts }}</b> товара на сумму <b>{{ totalPrice | numberFormat }}</b></p>
-          </div>
-
-          <button class="cart__button button button--primery" type="submit">
-            Оформить заказ
-          </button>
-        </div> -->
-
         <OrderCartInfo page-type = "OrderPage" :products="products" :order-delivery-price="orderDeliveryPrice"
         :order-amount-products="orderAmountProducts" :total-price="totalPrice"/>
 
@@ -136,15 +118,14 @@
 <script>
 import axios from 'axios';
 import { mapGetters } from 'vuex';
-import numberFormat from '@/helpers/numberFormat';
 import BaseFormText from '@/components/BaseFormText.vue';
 import BaseFormTextArea from '@/components/BaseFormTextArea.vue';
 // import OrderItem from '@/components/OrderItem.vue';
 import OrderCartInfo from '@/components/OrderCartInfo.vue';
+import { defineComponent } from 'vue';
 import { API_BASE_URL } from '../config';
 
-export default {
-  filters: { numberFormat },
+export default defineComponent({
   components: {
     BaseFormText,
     BaseFormTextArea,
@@ -205,5 +186,5 @@ export default {
       }, 3000);
     },
   },
-};
+});
 </script>
