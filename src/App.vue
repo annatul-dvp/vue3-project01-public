@@ -1,5 +1,4 @@
 <template>
-  <div>
     <header class="header">
       <div class="header__wrapper container">
         <span class="header__info">Каталог</span>
@@ -89,7 +88,7 @@
 
         <p class="footer__desc">
           Все права на&nbsp;материалы, находящиеся на&nbsp;сайте, охраняются в&nbsp;соответствии
-с&nbsp;законодательством&nbsp;РФ,
+          с&nbsp;законодательством&nbsp;РФ,
           в&nbsp;том числе об&nbsp;авторском праве и&nbsp;смежных правах.
         </p>
         <ul class="footer__data">
@@ -110,14 +109,15 @@
         </span>
       </div>
     </footer>
-  </div>
+    <div id="teleport-target"></div>
 </template>
 
 <script>
 import { mapActions, mapMutations } from 'vuex';
 import CartIndicator from '@/components/CartIndicator.vue';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'App',
   components: { CartIndicator },
   created() {
@@ -131,5 +131,5 @@ export default {
     ...mapActions(['loadCart']),
     ...mapMutations(['updateUserAccessKey']),
   },
-};
+});
 </script>

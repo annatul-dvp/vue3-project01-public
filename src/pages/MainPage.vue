@@ -12,6 +12,7 @@
   <div class="content__catalog">
     <ProductFilter v-model:price-from="filterPriceFrom" v-model:price-to="filterPriceTo"
     v-model:category-id="filterCategoryId" v-model:colorId="filterColorId"/>
+
     <section class="catalog">
       <div v-if="productsLoading">
         <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"

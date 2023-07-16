@@ -1,8 +1,8 @@
 <template>
-  <main class="content container" v-if="productLoading">Идёт загрузка товара...</main>
-  <main class="content container" v-else-if="!productData">Не удалось загрузить данные о товаре</main>
-  <main class="content container" v-else-if="productLoadingFailed">Не удалось загрузить данные о товаре</main>
-  <main class="content container" v-else>
+  <div v-if="productLoading">Идёт загрузка товара...</div>
+  <div v-else-if="!productData">Не удалось загрузить данные о товаре</div>
+  <div v-else-if="productLoadingFailed">Не удалось загрузить данные о товаре</div>
+  <div v-else>
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
@@ -167,7 +167,7 @@
         </div>
       </div>
     </section>
-  </main>
+  </div>
 </template>
 
 <script>
@@ -181,6 +181,9 @@ import { defineComponent } from 'vue';
 import { API_BASE_URL } from '../config';
 
 export default defineComponent({
+  props: {
+    productId: { type: [Number, String], required: true },
+  },
   data() {
     return {
       pageType: 'productPage',
@@ -217,7 +220,7 @@ export default defineComponent({
       this.productLoadingFailed = false;
       clearTimeout(this.loadProductsTimer);
       this.loadProductsTimer = setTimeout(() => {
-        axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
+        axios.get(`${API_BASE_URL}/api/products/${this.productId}`)
           .then((response) => { this.productData = response.data; })
           .catch(() => { this.productLoadingFailed = true; })
           .then(() => { this.productLoading = false; });
@@ -245,3 +248,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.item {
+  grid-template-columns: 1fr;
+}
+</style>
