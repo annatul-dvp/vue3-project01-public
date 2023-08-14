@@ -1,7 +1,6 @@
 <template>
-  <main class="content container" v-if="productLoading">Идёт загрузка товара...</main>
-  <main class="content container" v-else-if="!productData">Не удалось загрузить данные о товаре</main>
-  <main class="content container" v-else-if="productLoadingFailed">Не удалось загрузить данные о товаре</main>
+  <main class="content container" v-if="productStatus.isLoading">Идёт загрузка товара...</main>
+  <main class="content container" v-else-if="productStatus.isFailed">Не удалось загрузить данные о товаре</main>
   <main class="content container" v-else>
     <div class="content__top">
       <ul class="breadcrumbs">
@@ -26,7 +25,7 @@
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" :src="product.image" :alt="product.title">
+          <img width="570" height="570" :src="product.imageURL" :alt="product.title">
         </div>
       </div>
 
@@ -36,9 +35,9 @@
           {{ product.title }}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST" @submit.prevent="addToCart">
+          <form class="form" action="#" method="POST" @submit.prevent="doAddToCart">
             <b class="item__price">
-              {{ productPricePretty }}
+              {{ product.pricePretty }}
             </b>
 
             <fieldset class="form__block">
@@ -88,17 +87,17 @@
             <div class="item__row">
               <CounterProduct v-model:product-amount="productAmount"  v-model:page-type="pageType"> </CounterProduct>
 
-              <button class="button button--primery" type="submit" :disabled="productAddSending">
+              <button class="button button--primery" type="submit" :disabled="productAddStatus.isAddSending">
                 В корзину
               </button>
 
-              <BaseModal v-model:open="isShowAddedMessage">
+              <BaseModal v-model:open="productAddStatus.isAddedMessageShowed">
                 Товар добавлен в корзину
               </BaseModal>
             </div>
 
-            <div v-show="productAdded">Товар добавлен в корзину</div>
-            <div v-show="productAddSending">Добавляем товар в корзину...</div>
+            <div v-show="productAddStatus.isAdded">Товар добавлен в корзину</div>
+            <div v-show="productAddStatus.isAddSending">Добавляем товар в корзину...</div>
           </form>
         </div>
       </div>
@@ -171,77 +170,139 @@
 </template>
 
 <script>
-import axios from 'axios';
-import gotoPage from '@/helpers/gotoPage';
-import numberFormat from '@/helpers/numberFormat';
 import CounterProduct from '@/components/CounterProduct.vue';
 import BaseModal from '@/components/BaseModal.vue';
-import { mapActions } from 'vuex';
-import { defineComponent } from 'vue';
-import { API_BASE_URL } from '../config';
+// import { useStore } from 'vuex';
+import { defineComponent, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import useProduct from '@/hooks/useProduct';
+import useProductToCart from '@/hooks/useProductToCart';
 
 export default defineComponent({
-  data() {
+  components: {
+    CounterProduct,
+    BaseModal,
+  },
+
+  setup() {
+    // const $store = useStore();
+    const $route = useRoute();
+    const {
+      product,
+      category,
+      status: productStatus,
+      fetchProduct,
+    } = useProduct();
+    const {
+      productAmount,
+      status: productAddStatus,
+
+      doAddToCart,
+    } = useProductToCart(product);
+
+    const pageType = ref('productPage');
+
+    const color = ref('#73B6EA');
+
+    fetchProduct($route.params.id);
+
+    // const productAdded = ref(false);
+    // const productAmount = ref(1);
+    // const productAddSending = ref(false);
+    // const isShowAddedMessage = ref(false);
+    // const doAddToCart = () => {
+    //   productAdded.value = false;
+    //   productAddSending.value = true;
+    //   isShowAddedMessage.value = false;
+
+    //   $store.dispatch('addProductToCart', { productID: product.value.id, amount: productAmount.value })
+    //     .then(() => {
+    //       productAdded.value = true;
+    //       productAddSending.value = false;
+    //       isShowAddedMessage.value = true;
+    //     });
+    // };
+
     return {
-      pageType: 'productPage',
-      productAmount: 1,
-      color: '#73B6EA',
+      pageType,
+      productAmount,
+      color,
+      productData: product,
+      productStatus,
+      productAddStatus,
+      // productAdded,
+      // productAddSending,
+      // isShowAddedMessage,
+      product,
+      category,
 
-      productData: null,
-
-      productLoading: false,
-      productLoadingFailed: false,
-
-      productAdded: false,
-      productAddSending: false,
-      isShowAddedMessage: false,
+      doAddToCart,
     };
   },
-  components: { CounterProduct, BaseModal },
-  computed: {
-    productPricePretty() {
-      return numberFormat(this.product.price);
-    },
-    product() {
-      return this.productData ? { ...this.productData, image: this.productData.image.file.url } : [];
-    },
-    category() {
-      return this.productData.category;
-    },
-  },
-  methods: {
-    ...mapActions(['addProductToCart']),
-
-    loadProduct() {
-      this.productLoading = true;
-      this.productLoadingFailed = false;
-      clearTimeout(this.loadProductsTimer);
-      this.loadProductsTimer = setTimeout(() => {
-        axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
-          .then((response) => { this.productData = response.data; })
-          .catch(() => { this.productLoadingFailed = true; })
-          .then(() => { this.productLoading = false; });
-      });
-    },
-    gotoPage,
-    addToCart() {
-      this.productAdded = false;
-      this.productAddSending = true;
-      this.isShowAddedMessage = false;
-
-      this.addProductToCart({ productID: this.product.id, amount: this.productAmount })
-        .then(() => {
-          this.productAdded = true;
-          this.productAddSending = false;
-          this.isShowAddedMessage = true;
-        });
-    },
-  },
-  created() {
-    this.loadProduct();
-  },
-  beforeRouteUpdate() {
-    this.loadProduct();
-  },
 });
+
+// export default defineComponent({
+//   data() {
+//     return {
+//       pageType: 'productPage',
+//       productAmount: 1,
+//       color: '#73B6EA',
+
+//       productData: null,
+
+//       productLoading: false,
+//       productLoadingFailed: false,
+
+//       productAdded: false,
+//       productAddSending: false,
+//       isShowAddedMessage: false,
+//     };
+//   },
+//   components: { CounterProduct, BaseModal },
+//   computed: {
+//     productPricePretty() {
+//       return numberFormat(this.product.price);
+//     },
+//     product() {
+//       return this.productData ? { ...this.productData, image: this.productData.image.file.url } : [];
+//     },
+//     category() {
+//       return this.productData.category;
+//     },
+//   },
+//   methods: {
+//     ...mapActions(['addProductToCart']),
+
+//     loadProduct() {
+//       this.productLoading = true;
+//       this.productLoadingFailed = false;
+//       clearTimeout(this.loadProductsTimer);
+//       this.loadProductsTimer = setTimeout(() => {
+//         axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
+//           .then((response) => { this.productData = response.data; })
+//           .catch(() => { this.productLoadingFailed = true; })
+//           .then(() => { this.productLoading = false; });
+//       });
+//     },
+//     gotoPage,
+//     addToCart() {
+//       this.productAdded = false;
+//       this.productAddSending = true;
+//       this.isShowAddedMessage = false;
+
+//       this.addProductToCart({ productID: this.product.id, amount: this.productAmount })
+//         .then(() => {
+//           this.productAdded = true;
+//           this.productAddSending = false;
+//           this.isShowAddedMessage = true;
+//         });
+//     },
+//   },
+//   created() {
+//     this.loadProduct();
+//   },
+//   beforeRouteUpdate() {
+//     this.loadProduct();
+//   },
+// });
 </script>

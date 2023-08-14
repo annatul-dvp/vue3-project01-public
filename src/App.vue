@@ -16,7 +16,7 @@
       </div>
     </header>
 
-    <router-view/>
+    <router-view :key="$route.fullPath"/>
 
     <footer class="footer">
       <div class="footer__wrapper container">
