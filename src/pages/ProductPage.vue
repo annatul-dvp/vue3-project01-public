@@ -185,7 +185,6 @@ export default defineComponent({
   },
 
   setup() {
-    // const $store = useStore();
     const $route = useRoute();
     const {
       product,
@@ -206,23 +205,6 @@ export default defineComponent({
 
     fetchProduct($route.params.id);
 
-    // const productAdded = ref(false);
-    // const productAmount = ref(1);
-    // const productAddSending = ref(false);
-    // const isShowAddedMessage = ref(false);
-    // const doAddToCart = () => {
-    //   productAdded.value = false;
-    //   productAddSending.value = true;
-    //   isShowAddedMessage.value = false;
-
-    //   $store.dispatch('addProductToCart', { productID: product.value.id, amount: productAmount.value })
-    //     .then(() => {
-    //       productAdded.value = true;
-    //       productAddSending.value = false;
-    //       isShowAddedMessage.value = true;
-    //     });
-    // };
-
     return {
       pageType,
       productAmount,
@@ -230,9 +212,6 @@ export default defineComponent({
       productData: product,
       productStatus,
       productAddStatus,
-      // productAdded,
-      // productAddSending,
-      // isShowAddedMessage,
       product,
       category,
 
@@ -240,69 +219,4 @@ export default defineComponent({
     };
   },
 });
-
-// export default defineComponent({
-//   data() {
-//     return {
-//       pageType: 'productPage',
-//       productAmount: 1,
-//       color: '#73B6EA',
-
-//       productData: null,
-
-//       productLoading: false,
-//       productLoadingFailed: false,
-
-//       productAdded: false,
-//       productAddSending: false,
-//       isShowAddedMessage: false,
-//     };
-//   },
-//   components: { CounterProduct, BaseModal },
-//   computed: {
-//     productPricePretty() {
-//       return numberFormat(this.product.price);
-//     },
-//     product() {
-//       return this.productData ? { ...this.productData, image: this.productData.image.file.url } : [];
-//     },
-//     category() {
-//       return this.productData.category;
-//     },
-//   },
-//   methods: {
-//     ...mapActions(['addProductToCart']),
-
-//     loadProduct() {
-//       this.productLoading = true;
-//       this.productLoadingFailed = false;
-//       clearTimeout(this.loadProductsTimer);
-//       this.loadProductsTimer = setTimeout(() => {
-//         axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
-//           .then((response) => { this.productData = response.data; })
-//           .catch(() => { this.productLoadingFailed = true; })
-//           .then(() => { this.productLoading = false; });
-//       });
-//     },
-//     gotoPage,
-//     addToCart() {
-//       this.productAdded = false;
-//       this.productAddSending = true;
-//       this.isShowAddedMessage = false;
-
-//       this.addProductToCart({ productID: this.product.id, amount: this.productAmount })
-//         .then(() => {
-//           this.productAdded = true;
-//           this.productAddSending = false;
-//           this.isShowAddedMessage = true;
-//         });
-//     },
-//   },
-//   created() {
-//     this.loadProduct();
-//   },
-//   beforeRouteUpdate() {
-//     this.loadProduct();
-//   },
-// });
 </script>

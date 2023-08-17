@@ -20,5 +20,6 @@ module.exports = {
     }],
     // 'linebreak-style': [2, 'windows'],
     'max-len': ['error', 150],
+    'func-names': 'off',
   },
 };

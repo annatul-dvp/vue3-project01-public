@@ -1,7 +1,6 @@
 <template>
-  <div v-if="productLoading">Идёт загрузка товара...</div>
-  <div v-else-if="!productData">Не удалось загрузить данные о товаре</div>
-  <div v-else-if="productLoadingFailed">Не удалось загрузить данные о товаре</div>
+  <div v-if="productStatus.isLoading">Идёт загрузка товара...</div>
+  <div v-else-if="productStatus.isFailed">Не удалось загрузить данные о товаре</div>
   <div v-else>
     <div class="content__top">
       <ul class="breadcrumbs">
@@ -26,7 +25,7 @@
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" :src="product.image" :alt="product.title">
+          <img width="570" height="570" :src="product.imageURL" :alt="product.title">
         </div>
       </div>
 
@@ -38,7 +37,7 @@
         <div class="item__form">
           <form class="form" action="#" method="POST" @submit.prevent="addToCart">
             <b class="item__price">
-              {{ productPricePretty }}
+              {{ product.pricePretty }}
             </b>
 
             <fieldset class="form__block">
@@ -171,80 +170,53 @@
 </template>
 
 <script>
-import axios from 'axios';
-import gotoPage from '@/helpers/gotoPage';
-import numberFormat from '@/helpers/numberFormat';
 import CounterProduct from '@/components/CounterProduct.vue';
 import BaseModal from '@/components/BaseModal.vue';
-import { mapActions } from 'vuex';
-import { defineComponent } from 'vue';
-import { API_BASE_URL } from '../config';
+import { defineComponent, ref } from 'vue';
+import useProduct from '@/hooks/useProduct';
+import useProductToCart from '@/hooks/useProductToCart';
 
 export default defineComponent({
   props: {
     productId: { type: [Number, String], required: true },
   },
-  data() {
+  components: {
+    CounterProduct,
+    BaseModal,
+  },
+
+  setup(props) {
+    const {
+      product,
+      category,
+      status: productStatus,
+      fetchProduct,
+    } = useProduct();
+    const {
+      productAmount,
+      status: productAddStatus,
+
+      doAddToCart,
+    } = useProductToCart(product);
+
+    const pageType = ref('productPage');
+
+    const color = ref('#73B6EA');
+
+    fetchProduct(props.productId);
+
     return {
-      pageType: 'productPage',
-      productAmount: 1,
-      color: '#73B6EA',
+      pageType,
+      productAmount,
+      color,
+      productData: product,
+      productStatus,
+      productAddStatus,
+      product,
+      category,
 
-      productData: null,
-
-      productLoading: false,
-      productLoadingFailed: false,
-
-      productAdded: false,
-      productAddSending: false,
-      isShowAddedMessage: false,
+      doAddToCart,
     };
-  },
-  components: { CounterProduct, BaseModal },
-  computed: {
-    productPricePretty() {
-      return numberFormat(this.product.price);
-    },
-    product() {
-      return this.productData ? { ...this.productData, image: this.productData.image.file.url } : [];
-    },
-    category() {
-      return this.productData.category;
-    },
-  },
-  methods: {
-    ...mapActions(['addProductToCart']),
-
-    loadProduct() {
-      this.productLoading = true;
-      this.productLoadingFailed = false;
-      clearTimeout(this.loadProductsTimer);
-      this.loadProductsTimer = setTimeout(() => {
-        axios.get(`${API_BASE_URL}/api/products/${this.productId}`)
-          .then((response) => { this.productData = response.data; })
-          .catch(() => { this.productLoadingFailed = true; })
-          .then(() => { this.productLoading = false; });
-      });
-    },
-    gotoPage,
-    addToCart() {
-      this.productAdded = false;
-      this.productAddSending = true;
-      this.isShowAddedMessage = false;
-
-      this.addProductToCart({ productID: this.product.id, amount: this.productAmount })
-        .then(() => {
-          this.productAdded = true;
-          this.productAddSending = false;
-          this.isShowAddedMessage = true;
-        });
-    },
-  },
-  created() {
-    this.loadProduct();
-  },
-  beforeRouteUpdate() {
-    this.loadProduct();
   },
 });
 </script>
